@@ -55,10 +55,27 @@ class ServerConnection {
     }
 
     _endpoint() {
+        // 1. Existing override check (highest priority)
         if (window.WS_URL) return window.WS_URL;
+    
+        // 2. Check for the injected build-time environment variable (Render.com deployment)
+        // NOTE: Replace 'WS_SERVER_URL' with the actual variable key used in your build setup (e.g., VITE_WS_SERVER_URL).
+        const SD_ENDPOINT = process.env.WS_SERVER_URL; 
+    
+        // The WebRTC/Fallback path selection logic is preserved as it's required by the server.
+        const webrtc = window.isRtcSupported ? '/webrtc' : '/fallback';
+    
+        if (SD_ENDPOINT) {
+            // Use the injected base URL from Render.com and append the required path.
+            // The variable value must be the base URL: 'wss://your-app.onrender.com'
+            return SD_ENDPOINT + webrtc;
+        }
+    
+        // 3. Original logic (Fallback for local development or environments without injection)
+        // This part runs if no environment variable was successfully injected.
+        
         // hack to detect if deployment or development environment
         const protocol = location.protocol.startsWith('https') ? 'wss' : 'ws';
-        const webrtc = window.isRtcSupported ? '/webrtc' : '/fallback';
         const url = protocol + '://' + location.host + location.pathname + 'server' + webrtc;
         return url;
     }
