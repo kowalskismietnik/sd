@@ -55,6 +55,7 @@ class ServerConnection {
     }
 
     _endpoint() {
+        if (window.WS_URL) return window.WS_URL;
         // hack to detect if deployment or development environment
         const protocol = location.protocol.startsWith('https') ? 'wss' : 'ws';
         const webrtc = window.isRtcSupported ? '/webrtc' : '/fallback';
