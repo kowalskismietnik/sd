@@ -64,7 +64,7 @@ class ServerConnection {
         const webrtc = window.isRtcSupported ? '/webrtc' : '/fallback';
         
         // Check if the placeholder was replaced by the build command (sed)
-        if (SERVER_URL_PLACEHOLDER.startsWith('$$')) {
+        if (!SERVER_URL_PLACEHOLDER.startsWith('$$')) {
             return SERVER_URL_PLACEHOLDER + webrtc;
         }
     
